@@ -21,8 +21,6 @@ INTERNAL_ERROR_NO_LIST="INTERNAL: No todo list. You might want to re-init tq uni
 INTERNAL_ERROR_NO_LOG="INTERNAL: No log file. You might want to re-init tq unit"
 INTERNAL_ERROR_NO_STATE="INTERNAL: No state file. You might want to re-init tq unit"
 
-USAGE_MSG="Usage: bash tq.sh <command> [<args>]"
-
 init() {
 	[ ! -d "$ROOT" ] && (mkdir "$ROOT" && touch "$ROOT/$LIST" "$ROOT/$LOG" "$ROOT/$STATE");
 	echo '0' > "$ROOT/$STATE";
@@ -36,13 +34,13 @@ reset_sequence() {
 show_list() {
 	[ ! -d "$ROOT" ] && echo $NO_ROOT_MSG && return 1; 
 	[ ! -f "$ROOT/$LIST" ] && echo $INTERNAL_ERROR_NO_LIST && return -1; 
-	nl "$ROOT/$LIST";
+	LESS="-F -N" less "$ROOT/$LIST";
 }
 
 show_log() {
 	[ ! -d "$ROOT" ] && echo $NO_ROOT_MSG && return 1; 
 	[ ! -f "$ROOT/$LOG" ] && echo $INTERNAL_ERROR_NO_LOG && return -2; 
-	less "$ROOT/$LOG";
+	LESS="-PProgress$ -F -n" less "$ROOT/$LOG";
 }
 
 add_task() {
@@ -110,32 +108,52 @@ quantum() {
 	notify-send --urgency=low "$HEADER" "$ENDMESSAGE\n\tTimepoint: $(date +'%H%M')";
 }
 
+USAGE_MSG="Usage: tq <command> [<args>]"
+
 main() {
-	[ $# -lt 1 ] && echo $TOO_FEW_ARGUMENTS_MSG && echo $USAGE_MSG && return 0;
+	[ $# -lt 1 ] && echo $TOO_FEW_ARGUMENTS_MSG && echo -e "$USAGE_MSG\n\t'tq help' will show help" && return 0;
 
 	COMMAND="$1"
 	ARGUMENTS="${@:2}"
 
+	HELP_MSG=$(cat <<EOF
+$USAGE_MSG
+
+Commands:
+	help                                                      show this help
+	init                                                      initilaize tq unit
+	{st[art] | r[eset]}                                       reset quantum counter (useful in the beginning of a day)
+	t[asks]                                                   show all available tasks (and their indicies)
+	pr[ogress]                                                show progress for all tasks (even done ones)
+	add <task heading>                                        add new task
+	{done | rm | remove} <index> [<index> [<index> [...]]]    remove one or many tasks
+	{do | quantum-for | qf} <index>                           start time quantum for particular task
+EOF
+)
+
 	case "$COMMAND" in
-		init)
+		"init")
 			init $ARGUMENTS; ;;
-		st|start)
+		"st"|"start"|"r"|"reset")
 			reset_sequence $ARGUMENTS;
 			;;
-		t|tasks)
+		"t"|"tasks")
 			show_list $ARGUMENTS;
 			;;
-		pr|progress)
+		"pr"|"progress")
 			show_log $ARGUMENTS;
 			;;
-		add)
+		"add")
 			add_task $ARGUMENTS;
 			;;
-		rm|remove)
+		"done"|"rm"|"remove")
 			remove_task $ARGUMENTS;
 			;;
-		do|qf|quantum-for)
+		"do"|"qf"|"quantum-for")
 			quantum $ARGUMENTS;
+			;;
+		"help")
+			echo -e "$HELP_MSG";
 			;;
 		*)
 			echo "Unknown command: $COMMAND";
