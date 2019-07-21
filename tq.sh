@@ -11,7 +11,7 @@ LIST=tasks
 LOG=log
 STATE=state
 
-NO_ROOT_MSG="Cannot find tq root"
+NO_ROOT_MSG="Cannot find tq unit"
 NO_TASK_MSG="You should specify a task number"
 NAN_MSG="Argument should be a number"
 NO_SUCH_TASK_MSG="There is no such task"
@@ -54,13 +54,13 @@ remove_task() {
 	[ ! -d "$ROOT" ] && echo $NO_ROOT_MSG && return 1; 
 	[ ! -f "$ROOT/$LIST" ] && echo $INTERNAL_ERROR_NO_LIST && return -1; 
 
-    [ "$1" = 'all' ] && echo -n >"$ROOT/$LIST" || {
+	[ "$1" = 'all' ] && echo -n >"$ROOT/$LIST" || {
 		lst="";
-        for i in $@; do
-            [[ "$i" =~ ^[0-9]+$ ]] && lst+=" $i";
-        done
+		for i in $@; do
+			[[ "$i" =~ ^[0-9]+$ ]] && lst+=" $i";
+		done
 		sed -i "$(echo "$lst" | sed -E 's/ *([0-9]+)/\1d;/gI')" "$ROOT/$LIST";
-    }
+	}
 }
 
 # INTERNAL: No checks
