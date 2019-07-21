@@ -41,7 +41,7 @@ show_list() {
 
 show_log() {
 	[ ! -d "$ROOT" ] && echo $NO_ROOT_MSG && return 1; 
-	[ ! -f "$ROOT/$LOG" ] && echo $INTERNAL_ERROR_NO_LOG && return -1; 
+	[ ! -f "$ROOT/$LOG" ] && echo $INTERNAL_ERROR_NO_LOG && return -2; 
 	less "$ROOT/$LOG";
 }
 
