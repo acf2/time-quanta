@@ -34,13 +34,13 @@ reset_sequence() {
 show_list() {
 	[ ! -d "$ROOT" ] && echo $NO_ROOT_MSG && return 1; 
 	[ ! -f "$ROOT/$LIST" ] && echo $INTERNAL_ERROR_NO_LIST && return -1; 
-	LESS="-F -N" less "$ROOT/$LIST";
+	LESS="-XRFN" less "$ROOT/$LIST";
 }
 
 show_log() {
 	[ ! -d "$ROOT" ] && echo $NO_ROOT_MSG && return 1; 
 	[ ! -f "$ROOT/$LOG" ] && echo $INTERNAL_ERROR_NO_LOG && return -2; 
-	LESS="-PProgress$ -F -n" less "$ROOT/$LOG";
+	LESS="-PProgress$ -XRFn" less "$ROOT/$LOG";
 }
 
 add_task() {
