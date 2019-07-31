@@ -21,6 +21,12 @@ INTERNAL_ERROR_NO_LIST="INTERNAL: No todo list. You might want to re-init tq uni
 INTERNAL_ERROR_NO_LOG="INTERNAL: No log file. You might want to re-init tq unit"
 INTERNAL_ERROR_NO_STATE="INTERNAL: No state file. You might want to re-init tq unit"
 
+escape() {
+	while read data; do
+		echo $data | sed 's/\\/\\\\/gI;s/(/\\(/gI;s/)/\\)/gI;s/\[/\\[/gI;s/\]/\\]/gI;';
+	done;
+}
+
 init() {
 	[ ! -d "$ROOT" ] && (mkdir "$ROOT" && touch "$ROOT/$LIST" "$ROOT/$LOG" "$ROOT/$STATE");
 	echo '0' > "$ROOT/$STATE";
@@ -63,7 +69,7 @@ remove_task() {
 
 # INTERNAL: No checks
 add_mark() {
-	TASK=$(sed $1'!d' "$ROOT/$LIST");
+	TASK=$(sed $1'!d' "$ROOT/$LIST" | escape | tr -d '\n');
 
 	# If no such task in log, create it.
 	grep -q -E "^$TASK: " "$ROOT/$LOG" || echo "$TASK: " >> "$ROOT/$LOG";
@@ -79,7 +85,7 @@ quantum() {
 	[[ ! "$1" =~ ^[0-9]+$ ]] && echo $NAN_MSG && return 3;
 
 	[ ! -f "$ROOT/$LIST" ] && echo $INTERNAL_ERROR_NO_LIST && return -1; 
-	TASK=$(sed $1'!d' "$ROOT/$LIST");
+	TASK=$(sed $1'!d' "$ROOT/$LIST" | escape | tr -d '\n');
 	[ -z "$TASK" ] && echo $NO_SUCH_TASK_MSG && return 4;
 
 	[ ! -f "$ROOT/$STATE" ] && echo $INTERNAL_ERROR_NO_STATE && return -3; 
