@@ -107,7 +107,7 @@ quantum() {
 
 	notify-send --urgency=low "$HEADER" "$PREMESSAGE\n\tTimepoint: $(date +'%H%M')" &&
 	sleep $(( $QUANTUM_MINUTES * $SECONDS_IN_MINUTE )) &&
-	add_mark && 
+	add_mark $1 && 
 	echo "$(( $CURRENT_STATE + 1 ))" >"$ROOT/$STATE" &&
 	notify-send --urgency=low "$HEADER" "$AFTERMESSAGE\n\tTimepoint: $(date +'%H%M')" &&
 	sleep $(( $WAIT_MINUTES * $SECONDS_IN_MINUTE )) &&
