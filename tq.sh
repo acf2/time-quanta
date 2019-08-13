@@ -69,15 +69,15 @@ remove_task() {
 
 # INTERNAL: No checks
 add_mark() {
-	TASK=$(sed $1'!d' "$ROOT/$LIST" | escape | tr -d '\n');
-	STR_TASK=$(sed $1'!d' "$ROOT/$LIST" | tr -d '\n'); # Crutches everywhere!
+	ESCAPED_TASK=$(sed $1'!d' "$ROOT/$LIST" | escape | tr -d '\n');
+	TASK=$(sed $1'!d' "$ROOT/$LIST" | tr -d '\n'); # Crutches everywhere!
 
 	# If no such task in log, create it.
-	grep -q -E "^$TASK: " "$ROOT/$LOG" || echo "$STR_TASK: " >> "$ROOT/$LOG";
+	grep -q -E "^$ESCAPED_TASK: " "$ROOT/$LOG" || echo "$TASK: " >> "$ROOT/$LOG";
 
-	grep -q -E "^$TASK: [| ]*\|\|\|\|$" "$ROOT/$LOG" &&
-	sed -i -E "s/^($TASK: [| ]*)$/\1 |/" "$ROOT/$LOG" || # previous chunk is complete
-	sed -i -E "s/^($TASK: [| ]*)$/\1|/" "$ROOT/$LOG"; # previous chunk is incomplete
+	grep -q -E "^$ESCAPED_TASK: [| ]*\|\|\|\|$" "$ROOT/$LOG" &&
+	sed -i -E "s/^($ESCAPED_TASK: [| ]*)$/\1 |/" "$ROOT/$LOG" || # previous chunk is complete
+	sed -i -E "s/^($ESCAPED_TASK: [| ]*)$/\1|/" "$ROOT/$LOG"; # previous chunk is incomplete
 }
 
 quantum() {
@@ -86,7 +86,7 @@ quantum() {
 	[[ ! "$1" =~ ^[0-9]+$ ]] && echo $NAN_MSG && return 3;
 
 	[ ! -f "$ROOT/$LIST" ] && echo $INTERNAL_ERROR_NO_LIST && return -1; 
-	TASK=$(sed $1'!d' "$ROOT/$LIST" | escape | tr -d '\n');
+	TASK=$(sed $1'!d' "$ROOT/$LIST" | tr -d '\n');
 	[ -z "$TASK" ] && echo $NO_SUCH_TASK_MSG && return 4;
 
 	[ ! -f "$ROOT/$STATE" ] && echo $INTERNAL_ERROR_NO_STATE && return -3; 
