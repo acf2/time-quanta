@@ -70,9 +70,10 @@ remove_task() {
 # INTERNAL: No checks
 add_mark() {
 	TASK=$(sed $1'!d' "$ROOT/$LIST" | escape | tr -d '\n');
+	STR_TASK=$(sed $1'!d' "$ROOT/$LIST" | tr -d '\n'); # Crutches everywhere!
 
 	# If no such task in log, create it.
-	grep -q -E "^$TASK: " "$ROOT/$LOG" || echo "$TASK: " >> "$ROOT/$LOG";
+	grep -q -E "^$TASK: " "$ROOT/$LOG" || echo "$STR_TASK: " >> "$ROOT/$LOG";
 
 	grep -q -E "^$TASK: [| ]*\|\|\|\|$" "$ROOT/$LOG" &&
 	sed -i -E "s/^($TASK: [| ]*)$/\1 |/" "$ROOT/$LOG" || # previous chunk is complete
