@@ -95,6 +95,7 @@ quantum() {
 	HEADER="TQ-$(( $CURRENT_STATE + 1 ))";
 	PREMESSAGE="Time quantum $(( $CURRENT_STATE + 1 )) ($(( $CURRENT_STATE % 4 + 1)))\n\tTask: $TASK";
 	AFTERMARKS=$(printf "%$(( $CURRENT_STATE % 4 + 1 ))s" | tr " " "|");
+	SEPARATOR="-----";
 
 	if [ $(( $CURRENT_STATE % 4 )) -eq 3 ]; then
 		AFTERMESSAGE="Huge interlude:\n\t15 minutes\n\tmarks: $AFTERMARKS";
@@ -107,12 +108,15 @@ quantum() {
 	ENDMESSAGE="Break had ended";
 
 	notify-send --urgency=low "$HEADER" "$PREMESSAGE\n\tTimepoint: $(date +'%H%M')" &&
+	echo -e "$HEADER\n$SEPARATOR\n$PREMESSAGE\n\tTimepoint: $(date +'%H%M')\n" &&
 	sleep $(( $QUANTUM_MINUTES * $SECONDS_IN_MINUTE )) &&
 	add_mark $1 && 
 	echo "$(( $CURRENT_STATE + 1 ))" >"$ROOT/$STATE" &&
 	notify-send --urgency=low "$HEADER" "$AFTERMESSAGE\n\tTimepoint: $(date +'%H%M')" &&
+	echo -e "$HEADER\n$SEPARATOR\n$AFTERMESSAGE\n\tTimepoint: $(date +'%H%M')\n" &&
 	sleep $(( $WAIT_MINUTES * $SECONDS_IN_MINUTE )) &&
-	notify-send --urgency=low "$HEADER" "$ENDMESSAGE\n\tTimepoint: $(date +'%H%M')";
+	notify-send --urgency=low "$HEADER" "$ENDMESSAGE\n\tTimepoint: $(date +'%H%M')" &&
+	echo -e "$HEADER\n$SEPARATOR\n$ENDMESSAGE\n\tTimepoint: $(date +'%H%M')\n";
 }
 
 USAGE_MSG="Usage: tq <command> [<args>]"
