@@ -108,15 +108,15 @@ quantum() {
 	ENDMESSAGE="Break had ended";
 
 	notify-send --urgency=low "$HEADER" "$PREMESSAGE\n  Timepoint: $(date +'%H%M')" &&
-	echo -e "$SEPARATOR\n$PREMESSAGE\nTimepoint: $(date +'%H%M')" &&
+	echo -e "$SEPARATOR\n$PREMESSAGE\n  Timepoint: $(date +'%H%M')" &&
 	sleep $(( $QUANTUM_MINUTES * $SECONDS_IN_MINUTE )) &&
 	add_mark $1 && 
 	echo "$(( $CURRENT_STATE + 1 ))" >"$ROOT/$STATE" &&
 	notify-send --urgency=low "$HEADER" "$AFTERMESSAGE\n  Timepoint: $(date +'%H%M')" &&
-	echo -e "$SEPARATOR\n$AFTERMESSAGE\nTimepoint: $(date +'%H%M')" &&
+	echo -e "$SEPARATOR\n$AFTERMESSAGE\n  Timepoint: $(date +'%H%M')" &&
 	sleep $(( $WAIT_MINUTES * $SECONDS_IN_MINUTE )) &&
 	notify-send --urgency=low "$HEADER" "$ENDMESSAGE\n  Timepoint: $(date +'%H%M')" &&
-	echo -e "$SEPARATOR\n$ENDMESSAGE\nTimepoint: $(date +'%H%M')";
+	echo -e "$SEPARATOR\n$ENDMESSAGE\n  Timepoint: $(date +'%H%M')";
 }
 
 USAGE_MSG="Usage: tq <command> [<args>]"
